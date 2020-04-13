@@ -40,7 +40,6 @@ export default class LoginButtonElement extends HTMLElement {
 
   set domain(val) {
     this._domain = val;
-    this.setAttribute('domain', val);
     this.buildAuth0Client();
   }
 
@@ -50,7 +49,6 @@ export default class LoginButtonElement extends HTMLElement {
 
   set clientid(val) {
     this._clientid = val;
-    this.setAttribute('clientid', val);
     this.buildAuth0Client();
   }
 
@@ -58,19 +56,11 @@ export default class LoginButtonElement extends HTMLElement {
     return ['domain', 'clientid'];
   }
 
-  async attributeChangedCallback(name, oldValue, newValue) {
-    if (oldValue !== newValue) {
-      switch (name) {
-        case 'domain':
-          this._domain = newValue;
-          break;
-        case 'clientid':
-          this._clientid = newValue;
-          break;
-      }
-    }
-    this.buildAuth0Client();
-  }
+  async attributeChangedCallback(attr, oldValue, newValue) {
+		if (oldValue !== newValue) {
+			this[attr] = newValue;
+		}
+	}
 
   async connectedCallback() {
     await this.buildAuth0Client();
