@@ -106,7 +106,7 @@ export default class LoginButtonElement extends HTMLElement {
   async updateUI() {
     const isAuthenticated = await this.auth0Client.isAuthenticated();
     this.loginButton = this.loginButton || this.shadowRoot.querySelector('button');
-		loginButton.innerText = isAuthenticated ? this.textLogout : this.textLogin;
+		this.loginButton.innerText = isAuthenticated ? this.textLogout : this.textLogin;
 	}
 
   async login() {
