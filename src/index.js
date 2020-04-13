@@ -6,21 +6,21 @@ const template = document.createElement('template');
 
 template.innerHTML = `
   <style>
-  #login-button {
-   background-color: #EB5424;
-   color: var(--color, #FFFFFF);
-   font-family: var(--font-family, sans-serif);
-   font-size: var(--font-size, 18px);
-   line-height: var(--line-height, 32px);
-    border-radius: 5px;
+  button {
+    background-color: var(--login-button-background, #EB5424);
+    color: var(--login-button-color, #FFFFFF);
+    font-family: var(--login-button-font-family, sans-serif);
+    font-size: var(--login-button-font-size, 18px);
+    line-height: var(--login-button-line-height, 32px);
+    border-radius: var(--login-button-border-radius, 5px);
     text-transform: uppercase;
-    border: 1px solid #EB5424;
-    margin: 5px 16px 5px 16px;
-    padding: 10px 30px 10px 30px;
+    border: var(--login-button-border, 1px solid #EB5424);
+    margin: 5px 16px;
+    padding: 10px 30px;
     text-decoration-line: none;
   }
   </style>
-  <button id="login-button" href="#" part="custom-button">Log in</button>
+  <button part="button">Log in</button>
 `;
 
 export default class LoginButtonElement extends HTMLElement {
@@ -101,12 +101,12 @@ export default class LoginButtonElement extends HTMLElement {
 
   async updateUI() {
     const isAuthenticated = await this.auth0Client.isAuthenticated();
-    const loginButton = this.shadowRoot.getElementById('login-button');
+    this._loginButton = this._loginButton || this.shadowRoot.querySelector('button');
 
-    if (!isAuthenticated) {
-      loginButton.innerText = 'Log in';
+    if (isAuthenticated) {
+      this._loginButton.innerText = 'Log out';
     } else {
-      loginButton.innerText = 'Log out';
+			this._loginButton.innerText = 'Log in';
     }
   }
 
