@@ -51,10 +51,18 @@ export default class LoginButtonElement extends HTMLElement {
   set clientid(val) {
     this._clientid = val;
     this.buildAuth0Client();
-  }
+	}
+
+	get textLogin() {
+		return this.hasAttribute('text-login') ? this.getAttribute('text-login') : 'Log in';
+	}
+
+	get textLogout() {
+		return this.hasAttribute('text-logout') ? this.getAttribute('text-logout') : 'Log out';
+	}
 
   static get observedAttributes() {
-    return ['domain', 'clientid'];
+    return ['domain', 'clientid', 'text-login', 'text-logout'];
   }
 
   async attributeChangedCallback(attr, oldValue, newValue) {
@@ -97,14 +105,9 @@ export default class LoginButtonElement extends HTMLElement {
 
   async updateUI() {
     const isAuthenticated = await this.auth0Client.isAuthenticated();
-    this._loginButton = this._loginButton || this.shadowRoot.querySelector('button');
-
-    if (isAuthenticated) {
-      this._loginButton.innerText = 'Log out';
-    } else {
-			this._loginButton.innerText = 'Log in';
-    }
-  }
+    this.loginButton = this.loginButton || this.shadowRoot.querySelector('button');
+		loginButton.innerText = isAuthenticated ? this.textLogout : this.textLogin;
+	}
 
   async login() {
     await this.auth0Client.loginWithRedirect({
