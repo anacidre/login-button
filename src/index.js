@@ -31,7 +31,8 @@ export default class LoginButtonElement extends HTMLElement {
     this._clientid = '';
 
     this.attachShadow({ mode: 'open' });
-    this.shadowRoot.appendChild(template.content.cloneNode(true));
+		this.shadowRoot.appendChild(template.content.cloneNode(true));
+		this.clickHandler = this.clickHandler.bind(this);
   }
 
   get domain() {
@@ -65,22 +66,27 @@ export default class LoginButtonElement extends HTMLElement {
   async connectedCallback() {
     await this.buildAuth0Client();
 
-    this.addEventListener('click', async (e) => {
-      const isAuthenticated = await this.auth0Client.isAuthenticated();
-
-      if (!isAuthenticated) {
-        await this.login();
-      } else {
-        await this.logout();
-      }
-      await this.updateUI();
-
-      e.preventDefault();
-    });
+    this.addEventListener('click', this.clickHandler);
 
     await this.handleRedirectCallback();
     await this.updateUI();
-  }
+	}
+
+	async disconnectedCallback() {
+		this.removeEventListener('click', this.clickHandler);
+	}
+
+	async clickHandler(e) {
+		e.preventDefault();
+		const isAuthenticated = await this.auth0Client.isAuthenticated();
+
+		if (!isAuthenticated) {
+			await this.login();
+		} else {
+			await this.logout();
+		}
+		await this.updateUI();
+	}
 
   async buildAuth0Client() {
     this.auth0Client = await createAuth0Client({
